@@ -7,3 +7,5 @@ Homestead.yaml
 .env
 .vagrant/
 _ide_helper.php
+.phpstorm.meta.php
+Vagrantfile
