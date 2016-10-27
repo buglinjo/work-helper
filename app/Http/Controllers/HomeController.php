@@ -52,7 +52,6 @@ class HomeController extends Controller
         $startDateTime = Carbon::createFromFormat('Y-m-d H:i', $startDate.' '.$workingDayStarts);
 
         $secondsLeftUntilEndOfDay     = 0;
-        $daysLeftUntilSalary          = 0;
         $secondsLeftUntilLunchBreak   = 0;
         $secondsPassedAfterLunchBreak = 0;
         $isLunchBreak                 = false;
