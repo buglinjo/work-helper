@@ -35,12 +35,6 @@
                 position: relative;
             }
 
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
-
             .content {
                 text-align: center;
             }
@@ -62,13 +56,25 @@
             .m-b-md {
                 margin-bottom: 30px;
             }
+
+            .salary {
+                font-size: 48px;
+            }
+
+            .days-passed {
+                font-size: 36px;
+            }
         </style>
     </head>
     <body>
         <div class="flex-center position-ref full-height">
             <div class="content">
                 <div class="title m-b-md">
-                    {{$percent}}
+                   <span class="today">After starting day: <strong>{{$today}}</strong></span><br/>
+                    <span class="salary">After salary: <strong>{{$salary}}</strong></span><br/>
+                    <span class="days-passed"><strong>{{$daysPassedAfterSalary}}</strong> days passed after salary.</span><br/>
+                    <span class="days-passed">It's your <strong>{{$daysPassedAfterSalary+1}}th</strong> working day after salary.</span><br/>
+                    <span class="days-passed"><strong>{{$daysLeftUntilSalary}}</strong> days left until salary.</span><br/>
                 </div>
             </div>
         </div>

@@ -19,7 +19,9 @@ class HomeController extends Controller
         $bothWeekInSeconds = 259200;
 
         $secondsLeftUntilEndOfDay = 0;
+        $daysLeftUntilSalary = 0;
 
+        $workingWeekStart = Carbon::now()->startOfWeek();
         $workingWeekEnd = Carbon::now()->endOfWeek()->subDays(3)->addSecond();
 
         $startOfWorkingDay = Carbon::now()->startOfDay()->addHours(9);
@@ -28,10 +30,12 @@ class HomeController extends Controller
 
         $weekNumber = $now->diffInWeeks($startDate)%2 == 0 ? 1 : 2;
 
-        $daysLeftUntilSalary = $now->copy()->endOfDay()->diffInDays($workingWeekEnd);
+        $daysLeftUntilEndOfWeek = $now->copy()->endOfDay()->diffInDays($workingWeekEnd);
+        $daysPassedAfterSalary = $now->copy()->endOfDay()->diffInDays($workingWeekStart);
+
 
         if($weekNumber == 1){
-            $daysLeftUntilSalary = $now->copy()->endOfDay()->diffInDays($workingWeekEnd) + 4;
+            $daysLeftUntilSalary = $daysLeftUntilEndOfWeek + 4;
         }
 
         if($now > $startOfWorkingDay && $now < $endOfWorkingDay){
@@ -43,8 +47,16 @@ class HomeController extends Controller
         $secondsLeftUntilSalary = ($daysLeftUntilSalary * $secondsInWorkingDay) + $secondsLeftUntilEndOfDay;
         $secondsPassedAfterStartingWeek = $bothWeekInSeconds - $secondsLeftUntilSalary;
 
-        $percent = (double)($secondsPassedAfterStartingWeek * 100 / $bothWeekInSeconds);
-        $data['percent'] = number_format($percent, 2, ".", "")."%";
+        $secondsPassedAfterStartingDay = $secondsInWorkingDay - $secondsLeftUntilEndOfDay;
+
+        $salary = (double)($secondsPassedAfterStartingWeek * 100 / $bothWeekInSeconds);
+        $today = (double)($secondsPassedAfterStartingDay * 100 / $secondsInWorkingDay);
+
+
+        $data['today'] = number_format($today, 2, ".", "")."%";
+        $data['salary'] = number_format($salary, 2, ".", "")."%";
+        $data['daysPassedAfterSalary'] = $daysPassedAfterSalary;
+        $data['daysLeftUntilSalary'] = $daysLeftUntilSalary;
 
         return view('welcome', $data);
     }
