@@ -9,32 +9,61 @@ use App\Http\Requests;
 
 class HomeController extends Controller
 {
+    private $payFrequencyTypes;
+    private $name;
+    private $timeZone;
+    private $startDate;
+    private $workingDayStarts;
+    private $lunchBreakStarts;
+    private $lunchBreakEnds;
+    private $workingDayEnds;
+    private $numberOfWorkdaysAWeek;
+    private $payFrequency;
+    private $hourlyWage;
+
+    public function __construct(){
+        $this->payFrequencyTypes     = ['Weekly', 'Bi-weekly', 'Semi-monthly', 'Monthly'];
+        $this->name                  = 'Irakli';
+        $this->timeZone              = 'America/New_York';
+        $this->startDate             = '2016-10-10';
+        $this->workingDayStarts      = '09:00';
+        $this->lunchBreakStarts      = '13:00';
+        $this->lunchBreakEnds        = '13:30';
+        $this->workingDayEnds        = '18:00';
+        $this->numberOfWorkdaysAWeek = 4;
+        $this->payFrequency          = 2;
+        $this->hourlyWage            = 12.00;
+    }
+
     public function index(){
-        $name              = 'Irakli';
-        $timeZone          = 'America/New_York';
-        $startDate         = '2016-10-10';
-        $workingDayStarts  = '09:00';
-        $recessStarts      = '13:00';
-        $recessEnds        = '13:30';
-        $workingDayEnds    = '18:00';
-        $payFrequencyTypes = ['Weekly', 'Bi-weekly', 'Semi-monthly', 'Monthly'];
-        $payFrequency      = 2;
-        $salaryPerHour     = 12.00;
+        $name                  = $this->name;
+        $timeZone              = $this->timeZone;
+        $startDate             = $this->startDate;
+        $workingDayStarts      = $this->workingDayStarts;
+        $lunchBreakStarts      = $this->lunchBreakStarts;
+        $lunchBreakEnds        = $this->lunchBreakEnds;
+        $workingDayEnds        = $this->workingDayEnds;
+        $numberOfWorkDaysAWeek = $this->numberOfWorkdaysAWeek;
+        $payFrequency          = $this->payFrequency;
+        $hourlyWage            = $this->hourlyWage;
 
         date_default_timezone_set($timeZone);
 
         $startDateTime = Carbon::createFromFormat('Y-m-d H:i', $startDate.' '.$workingDayStarts);
 
-        $bothWeekInSeconds        = 259200;
-        $secondsLeftUntilEndOfDay = 0;
-        $daysLeftUntilSalary      = 0;
+        $bothWeekInSeconds            = 259200;
+        $secondsLeftUntilEndOfDay     = 0;
+        $daysLeftUntilSalary          = 0;
+        $isLunchBreak                 = false;
+        $secondsLeftUntilLunchBreak   = 0;
+        $secondsPassedAfterLunchBreak = 0;
 
-        $workingWeekStart = Carbon::now()->startOfWeek();
-        $workingWeekEnd   = Carbon::now()->endOfWeek()->subDays(3)->addSecond();
+        $workingWeekStart = Carbon::today()->startOfWeek();
+        $workingWeekEnd   = Carbon::today()->endOfWeek()->subDays(7 - $numberOfWorkDaysAWeek)->addSecond();
 
         $todayWorkingDayStarts = Carbon::createFromFormat('H:i', $workingDayStarts);
-        $todayRecessStarts     = Carbon::createFromFormat('H:i', $recessStarts);
-        $todayRecessEnds       = Carbon::createFromFormat('H:i', $recessEnds);
+        $todayLunchBreakStarts = Carbon::createFromFormat('H:i', $lunchBreakStarts);
+        $todayLunchBreakEnds   = Carbon::createFromFormat('H:i', $lunchBreakEnds);
         $todayWorkingDayEnds   = Carbon::createFromFormat('H:i', $workingDayEnds);
 
         $secondsInWorkingDay = $todayWorkingDayStarts->diffInSeconds($todayWorkingDayEnds);
@@ -43,15 +72,22 @@ class HomeController extends Controller
 
         $weekNumber = $now->diffInWeeks($startDateTime)%2 == 0 ? 1 : 2;
 
-        $daysLeftUntilEndOfWeek = $now->copy()->endOfDay()->diffInDays($workingWeekEnd);
-        $daysPassedAfterSalary  = $now->copy()->endOfDay()->diffInDays($workingWeekStart);
+        $daysLeftUntilEndOfWeek = Carbon::today()->endOfDay()->diffInDays($workingWeekEnd);
+        $daysPassedAfterSalary  = Carbon::today()->endOfDay()->diffInDays($workingWeekStart);
 
         if($weekNumber == 1){
-            $daysLeftUntilSalary = $daysLeftUntilEndOfWeek + 4;
+            $daysLeftUntilSalary = $daysLeftUntilEndOfWeek + $numberOfWorkDaysAWeek;
         }
 
         if($now > $todayWorkingDayStarts && $now < $todayWorkingDayEnds){
             $secondsLeftUntilEndOfDay = $now->diffInSeconds($todayWorkingDayEnds);
+            if($now < $todayLunchBreakStarts){
+                $secondsLeftUntilLunchBreak = $now->diffInSeconds($todayLunchBreakStarts);
+            }elseif($now > $todayLunchBreakStarts && $now < $todayLunchBreakEnds){
+                $isLunchBreak = true;
+            }else{
+                $secondsPassedAfterLunchBreak = $now->diffInSeconds($todayLunchBreakEnds);
+            }
         }elseif($now < $todayWorkingDayStarts){
             $daysLeftUntilSalary++;
         }
@@ -63,11 +99,16 @@ class HomeController extends Controller
         $today  = $this->percent($secondsPassedAfterStartingDay, $secondsInWorkingDay);
         $salary = $this->percent($secondsPassedAfterSalary, $bothWeekInSeconds);
 
-        $data['name']                  = $name;
-        $data['today']                 = number_format($today, 2, ".", "")."%";
-        $data['salary']                = number_format($salary, 2, ".", "")."%";
-        $data['daysPassedAfterSalary'] = $daysPassedAfterSalary;
-        $data['daysLeftUntilSalary']   = $daysLeftUntilSalary;
+        $data = [
+            'name'                         => $name,
+            'today'                        => number_format($today, 2, ".", "")."%",
+            'salary'                       => number_format($salary, 2, ".", "")."%",
+            'daysPassedAfterSalary'        => $daysPassedAfterSalary,
+            'daysLeftUntilSalary'          => $daysLeftUntilSalary,
+            'isLunchBreak'                 => $isLunchBreak,
+            'secondsLeftUntilLunchBreak'   => $secondsLeftUntilLunchBreak,
+            'secondsPassedAfterLunchBreak' => $secondsPassedAfterLunchBreak
+        ];
 
         return view('welcome', $data);
     }

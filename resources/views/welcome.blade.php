@@ -66,9 +66,12 @@
         <div class="flex-center position-ref full-height">
             <div class="content">
                 <div class="title m-b-md">
-                   <span class="today">Hi <strong>{{$name}}</strong>,</span><br/>
-                   <span class="first">You have worked <strong>{{$today}}</strong> of your full day</span><br/>
-                    <span class="first">and <strong>{{$salary}}</strong> after salary.</span><br/>
+                    <span class="today">Hi <strong>{{$name}}</strong>,</span><br/>
+                    @if($isLunchBreak)
+                        <span class="first">Yey! It's lunch time ^_^</span><br/>
+                    @endif
+                    <span class="first">You have worked <strong>{{$today}}</strong> of your full day</span><br/>
+                    <span class="first">and <strong>{{$salary}}</strong> of your salary cycle.</span><br/>
                     <span class="second"><strong>{{$daysPassedAfterSalary}}</strong> days passed after salary.</span><br/>
                     <span class="second">It's your <strong>{{$daysPassedAfterSalary+1}}th</strong> working day after salary.</span><br/>
                     <span class="second"><strong>{{$daysLeftUntilSalary}}</strong> days left until salary.</span><br/>
