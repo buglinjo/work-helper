@@ -53,15 +53,11 @@
                 text-transform: uppercase;
             }
 
-            .m-b-md {
-                margin-bottom: 30px;
-            }
-
-            .salary {
+            .first {
                 font-size: 48px;
             }
 
-            .days-passed {
+            .second {
                 font-size: 36px;
             }
         </style>
@@ -70,11 +66,12 @@
         <div class="flex-center position-ref full-height">
             <div class="content">
                 <div class="title m-b-md">
-                   <span class="today">After starting day: <strong>{{$today}}</strong></span><br/>
-                    <span class="salary">After salary: <strong>{{$salary}}</strong></span><br/>
-                    <span class="days-passed"><strong>{{$daysPassedAfterSalary}}</strong> days passed after salary.</span><br/>
-                    <span class="days-passed">It's your <strong>{{$daysPassedAfterSalary+1}}th</strong> working day after salary.</span><br/>
-                    <span class="days-passed"><strong>{{$daysLeftUntilSalary}}</strong> days left until salary.</span><br/>
+                   <span class="today">Hi <strong>{{$name}}</strong>,</span><br/>
+                   <span class="first">You have worked <strong>{{$today}}</strong> of your full day</span><br/>
+                    <span class="first">and <strong>{{$salary}}</strong> after salary.</span><br/>
+                    <span class="second"><strong>{{$daysPassedAfterSalary}}</strong> days passed after salary.</span><br/>
+                    <span class="second">It's your <strong>{{$daysPassedAfterSalary+1}}th</strong> working day after salary.</span><br/>
+                    <span class="second"><strong>{{$daysLeftUntilSalary}}</strong> days left until salary.</span><br/>
                 </div>
             </div>
         </div>
