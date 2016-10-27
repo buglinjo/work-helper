@@ -51,12 +51,11 @@ class HomeController extends Controller
 
         $startDateTime = Carbon::createFromFormat('Y-m-d H:i', $startDate.' '.$workingDayStarts);
 
-        $bothWeekInSeconds            = 259200;
         $secondsLeftUntilEndOfDay     = 0;
         $daysLeftUntilSalary          = 0;
-        $isLunchBreak                 = false;
         $secondsLeftUntilLunchBreak   = 0;
         $secondsPassedAfterLunchBreak = 0;
+        $isLunchBreak                 = false;
 
         $workingWeekStart = Carbon::today()->startOfWeek();
         $workingWeekEnd   = Carbon::today()->endOfWeek()->subDays(7 - $numberOfWorkDaysAWeek)->addSecond();
@@ -67,17 +66,17 @@ class HomeController extends Controller
         $todayWorkingDayEnds   = Carbon::createFromFormat('H:i', $workingDayEnds);
 
         $secondsInWorkingDay = $todayWorkingDayStarts->diffInSeconds($todayWorkingDayEnds);
+        $secondsInPayFreq    = $secondsInWorkingDay * $numberOfWorkDaysAWeek * $payFrequency;
 
         $now = Carbon::now();
 
-        $weekNumber = $now->diffInWeeks($startDateTime)%2 == 0 ? 1 : 2;
+        $weeksPassed = $now->diffInWeeks($startDateTime);
+        $weekNumber = $weeksPassed + 1 - (int)($weeksPassed/$payFrequency) * $payFrequency;
 
         $daysLeftUntilEndOfWeek = Carbon::today()->endOfDay()->diffInDays($workingWeekEnd);
         $daysPassedAfterSalary  = Carbon::today()->endOfDay()->diffInDays($workingWeekStart);
 
-        if($weekNumber == 1){
-            $daysLeftUntilSalary = $daysLeftUntilEndOfWeek + $numberOfWorkDaysAWeek;
-        }
+        $daysLeftUntilSalary = $daysLeftUntilEndOfWeek + ($numberOfWorkDaysAWeek * ($payFrequency - $weekNumber));
 
         if($now > $todayWorkingDayStarts && $now < $todayWorkingDayEnds){
             $secondsLeftUntilEndOfDay = $now->diffInSeconds($todayWorkingDayEnds);
@@ -93,11 +92,11 @@ class HomeController extends Controller
         }
 
         $secondsLeftUntilSalary        = ($daysLeftUntilSalary * $secondsInWorkingDay) + $secondsLeftUntilEndOfDay;
-        $secondsPassedAfterSalary      = $bothWeekInSeconds - $secondsLeftUntilSalary;
+        $secondsPassedAfterSalary      = $secondsInPayFreq - $secondsLeftUntilSalary;
         $secondsPassedAfterStartingDay = $secondsInWorkingDay - $secondsLeftUntilEndOfDay;
 
         $today  = $this->percent($secondsPassedAfterStartingDay, $secondsInWorkingDay);
-        $salary = $this->percent($secondsPassedAfterSalary, $bothWeekInSeconds);
+        $salary = $this->percent($secondsPassedAfterSalary, $secondsInPayFreq);
 
         $data = [
             'name'                         => $name,
