@@ -51,7 +51,7 @@ class HomeController extends Controller
 
         $startDateTime    = Carbon::createFromFormat('Y-m-d H:i', $startDate.' '.$workDayStartsInHours);
         $workWeekStart    = Carbon::today()->startOfWeek();
-        $workWeekEnd      = Carbon::today()->endOfWeek()->subDays(7 - $numberOfWorkDaysAWeek)->addSecond();
+        $workWeekEnd      = Carbon::today()->startOfWeek()->addDays($numberOfWorkDaysAWeek);
         $workDayStarts    = Carbon::createFromFormat('H:i', $workDayStartsInHours);
         $workDayEnds      = Carbon::createFromFormat('H:i', $workDayEndsInHours);
         $lunchBreakStarts = Carbon::createFromFormat('H:i', $lunchBreakStartsInHours);
@@ -72,11 +72,15 @@ class HomeController extends Controller
 
         $weeksPassed = $now->diffInWeeks($startDateTime->copy()->startOfDay());
         $weekNumber  = $weeksPassed + 1 - (int)($weeksPassed/$payFrequency) * $payFrequency;
+//        $weekNumber += ($now > )
 
         $daysPassedAfterSalary  = Carbon::today()->endOfDay()->diffInDays($workWeekStart->copy()->subWeeks($weekNumber - 1));
         $daysLeftUntilEndOfWeek = Carbon::today()->endOfDay()->diffInDays($workWeekEnd);
         $daysLeftUntilSalary    = $daysLeftUntilEndOfWeek + ($numberOfWorkDaysAWeek * ($payFrequency - $weekNumber));
 
+        $workDayNumber = ($weekNumber - 1) * $numberOfWorkDaysAWeek;
+
+        dd($workDayNumber);
         if($isWorkDay){
             $todayWorkDayStarts    = $workDayStarts;
             $todayWorkDayEnds      = $workDayEnds;
