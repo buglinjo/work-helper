@@ -75,7 +75,6 @@ class HomeController extends Controller
 
         $daysPassedAfterSalary  = Carbon::today()->endOfDay()->diffInDays($workWeekStart->copy()->subWeeks($weekNumber - 1));
         $daysLeftUntilEndOfWeek = Carbon::today()->endOfDay()->diffInDays($workWeekEnd);
-
         $daysLeftUntilSalary    = $daysLeftUntilEndOfWeek + ($numberOfWorkDaysAWeek * ($payFrequency - $weekNumber));
 
         if($isWorkDay){
@@ -101,7 +100,7 @@ class HomeController extends Controller
             'today'                        => number_format($todayWorkPercent, 2, ".", "")."%",
             'salary'                       => number_format($salaryWorkPercent, 2, ".", "")."%",
             'daysPassedAfterSalary'        => $daysPassedAfterSalary,
-            'isDayNum'                     => $this->getNumPlace($daysPassedAfterSalary+1),
+            'isDayNum'                     => $this->getNumFormat($daysPassedAfterSalary+1),
             'daysLeftUntilSalary'          => $daysLeftUntilSalary,
             'isLunchBreak'                 => $isLunchBreak,
             'secondsLeftUntilLunchBreak'   => $secondsLeftUntilLunchBreak,
@@ -115,19 +114,9 @@ class HomeController extends Controller
         return 100 - (double)($num * 100 / $whole);
     }
 
-    private function getNumPlace($num){
-        switch($num){
-            case 1:
-                return "1st";
-                break;
-            case 2:
-                return "2nd";
-                break;
-            case 3:
-                return "3rd";
-                break;
-            default:
-                return $num."th";
-        }
+    private function getNumFormat($num){
+        $locale = 'en_US';
+        $nf = new \NumberFormatter($locale, \NumberFormatter::ORDINAL);
+        return $nf->format($num);
     }
 }
