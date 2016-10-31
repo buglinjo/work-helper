@@ -73,7 +73,7 @@
                     <span class="first">You have worked <strong>{{$today}}</strong> of your full day</span><br/>
                     <span class="first">and <strong>{{$salary}}</strong> of your salary cycle.</span><br/>
                     <span class="second"><strong>{{$daysPassedAfterSalary}}</strong> days passed after salary.</span><br/>
-                    <span class="second">It's your <strong>{{$daysPassedAfterSalary+1}}th</strong> workday after salary.</span><br/>
+                    <span class="second">It's your <strong>{{$isDayNum}}</strong> day after salary.</span><br/>
                     <span class="second"><strong>{{$daysLeftUntilSalary}}</strong> workdays left until salary.</span><br/>
                 </div>
             </div>

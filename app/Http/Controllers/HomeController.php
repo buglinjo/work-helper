@@ -26,10 +26,10 @@ class HomeController extends Controller
         $this->name                    = 'Irakli';
         $this->timeZone                = 'America/New_York';
         $this->startDate               = '2016-10-10';
-        $this->workDayStartsInHours    = '15:00';
+        $this->workDayStartsInHours    = '09:00';
         $this->workDayEndsInHours      = '18:00';
-        $this->lunchBreakStarts        = '16:00';
-        $this->lunchBreakEnds          = '16:30';
+        $this->lunchBreakStarts        = '13:00';
+        $this->lunchBreakEnds          = '13:30';
         $this->numberOfWorkdaysAWeek   = 4;
         $this->payFrequency            = 2;
         $this->hourlyWage              = 12.00;
@@ -81,8 +81,6 @@ class HomeController extends Controller
         if($isWorkDay){
             $todayWorkDayStarts    = $workDayStarts;
             $todayWorkDayEnds      = $workDayEnds;
-            $todayLunchBreakStarts = $lunchBreakStarts;
-            $todayLunchBreakEnds   = $lunchBreakEnds;
             if($isWorkTime){
                 $secondsLeftUntilEndOfDay = $now->diffInSeconds($todayWorkDayEnds);
                 $secondsLeftUntilSalary = $secondsLeftUntilEndOfDay;
@@ -103,6 +101,7 @@ class HomeController extends Controller
             'today'                        => number_format($todayWorkPercent, 2, ".", "")."%",
             'salary'                       => number_format($salaryWorkPercent, 2, ".", "")."%",
             'daysPassedAfterSalary'        => $daysPassedAfterSalary,
+            'isDayNum'                     => $this->getNumPlace($daysPassedAfterSalary+1),
             'daysLeftUntilSalary'          => $daysLeftUntilSalary,
             'isLunchBreak'                 => $isLunchBreak,
             'secondsLeftUntilLunchBreak'   => $secondsLeftUntilLunchBreak,
@@ -114,5 +113,21 @@ class HomeController extends Controller
 
     private function percent($num, $whole){
         return 100 - (double)($num * 100 / $whole);
+    }
+
+    private function getNumPlace($num){
+        switch($num){
+            case 1:
+                return "1st";
+                break;
+            case 2:
+                return "2nd";
+                break;
+            case 3:
+                return "3rd";
+                break;
+            default:
+                return $num."th";
+        }
     }
 }
