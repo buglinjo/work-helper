@@ -30,7 +30,7 @@ class HomeController extends Controller
         $this->workDayEndsInHours      = '18:00';
         $this->lunchBreakStarts        = '13:00';
         $this->lunchBreakEnds          = '13:30';
-        $this->numberOfWorkdaysAWeek   = 4;
+        $this->numberOfWorkdaysAWeek   = 5;
         $this->payFrequency            = 2;
         $this->hourlyWage              = 12.00;
     }
@@ -72,7 +72,6 @@ class HomeController extends Controller
 
         $weeksPassed = $now->diffInWeeks($startDateTime->copy()->startOfDay());
         $weekNumber  = $weeksPassed + 1 - (int)($weeksPassed/$payFrequency) * $payFrequency;
-//        $weekNumber += ($now > )
 
         $daysPassedAfterSalary  = Carbon::today()->endOfDay()->diffInDays($workWeekStart->copy()->subWeeks($weekNumber - 1));
         $daysLeftUntilEndOfWeek = Carbon::today()->endOfDay()->diffInDays($workWeekEnd);
@@ -80,7 +79,6 @@ class HomeController extends Controller
 
         $workDayNumber = ($weekNumber - 1) * $numberOfWorkDaysAWeek;
 
-        dd($workDayNumber);
         if($isWorkDay){
             $todayWorkDayStarts    = $workDayStarts;
             $todayWorkDayEnds      = $workDayEnds;
