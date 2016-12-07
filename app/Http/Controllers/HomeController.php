@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Devices;
+use App\User;
 use Carbon\Carbon;
+use Davibennun\LaravelPushNotification\Facades\PushNotification;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -36,6 +39,11 @@ class HomeController extends Controller
     }
 
     public function index(){
+
+        PushNotification::app('web')
+            ->to('fNFI0zK4RS4:APA91bH1UF-LImbbGhNWG-MDf5CX3TZ0nr6vEAnuingGarqkP9Gpk9HRhk8TzYaKDZeOJqoSKcGxINEdwMEbxF5kQqMdeT1PS0Xi8OiOkv6h-T20t6EeIrxfHS7OMDcdg5KgUOJKwjkD')
+            ->send('Hello World, i`m a push message');
+
         $name                    = $this->name;
         $timeZone                = $this->timeZone;
         $startDate               = $this->startDate;
