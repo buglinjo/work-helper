@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Devices;
-use App\User;
+use App\Device;
 use Carbon\Carbon;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
 use Illuminate\Http\Request;
@@ -40,8 +39,10 @@ class HomeController extends Controller
 
     public function index(){
 
+        $token = Device::findOrFail(1);
+
         PushNotification::app('web')
-            ->to('fNFI0zK4RS4:APA91bH1UF-LImbbGhNWG-MDf5CX3TZ0nr6vEAnuingGarqkP9Gpk9HRhk8TzYaKDZeOJqoSKcGxINEdwMEbxF5kQqMdeT1PS0Xi8OiOkv6h-T20t6EeIrxfHS7OMDcdg5KgUOJKwjkD')
+            ->to($token->device_token)
             ->send('Hello World, i`m a push message');
 
         $name                    = $this->name;
