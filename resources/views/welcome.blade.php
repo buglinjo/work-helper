@@ -63,7 +63,7 @@
             }
         </style>
     </head>
-    <body>
+    <body id="body">
         <div class="flex-center position-ref full-height">
             <div class="content">
                 <div class="title m-b-md">
@@ -79,6 +79,7 @@
                 </div>
             </div>
         </div>
+        <script src="js/jquery.js"></script>
         <script src="js/main.js"></script>
     </body>
 </html>
