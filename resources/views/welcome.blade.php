@@ -76,6 +76,7 @@
                     <span class="second"><strong>{{$daysPassedAfterSalary}}</strong> days passed after salary.</span><br/>
                     <span class="second">It's your <strong>{{$isDayNum}}</strong> day after salary.</span><br/>
                     <span class="second"><strong>{{$daysLeftUntilSalary}}</strong> workdays left until salary.</span><br/>
+                    <input type="hidden" value="{{csrf_token()}}" id="_token">
                 </div>
             </div>
         </div>

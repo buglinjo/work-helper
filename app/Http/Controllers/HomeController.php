@@ -9,8 +9,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
-class HomeController extends Controller
-{
+class HomeController extends Controller {
+
     private $payFrequencyTypes;
     private $name;
     private $timeZone;
@@ -24,6 +24,7 @@ class HomeController extends Controller
     private $hourlyWage;
 
     public function __construct(){
+
         $this->payFrequencyTypes       = ['Weekly', 'Bi-weekly', 'Semi-monthly', 'Monthly'];
         $this->name                    = 'Irakli';
         $this->timeZone                = 'America/New_York';
@@ -35,15 +36,12 @@ class HomeController extends Controller
         $this->numberOfWorkdaysAWeek   = 5;
         $this->payFrequency            = 2;
         $this->hourlyWage              = 12.00;
+
     }
 
     public function index(){
 
-        $token = Device::findOrFail(1);
-
-        PushNotification::app('web')
-            ->to($token->device_token)
-            ->send('Hello World, i`m a push message');
+        $this->pushNotification();
 
         $name                    = $this->name;
         $timeZone                = $this->timeZone;
@@ -119,15 +117,67 @@ class HomeController extends Controller
         ];
 
         return view('welcome', $data);
+
     }
 
     private function percent($num, $whole){
+
         return 100 - (double)($num * 100 / $whole);
+
     }
 
     private function getNumFormat($num){
+
         $locale = 'en_US';
         $nf = new \NumberFormatter($locale, \NumberFormatter::ORDINAL);
+
         return $nf->format($num);
+
+    }
+
+    private function pushNotification() {
+
+        $devices = Device::get(['device_token']);
+        $message = PushNotification::Message('Message Text',array(
+            'badge' => 1,
+            'sound' => 'example.aiff',
+
+            'actionLocKey' => 'Action button title!',
+            'locKey' => 'localized key',
+            'locArgs' => array(
+                'localized args',
+                'localized args',
+            ),
+            'launchImage' => 'image.jpg',
+
+            'custom' => array('custom data' => array(
+                'we' => 'want', 'send to app'
+            ))
+        ));
+        foreach ($devices as $d) {
+            PushNotification::app('web')
+                ->to($d->device_token)
+                ->send($message);
+        }
+    }
+
+    public function saveEndpoint(Request $request) {
+
+        $endpoint = $request->input('endpoint');
+        $endpoint = explode('/', $endpoint)[5];
+
+        $device = new Device();
+
+        $device->platform = 'web';
+        $device->device_token = $endpoint;
+
+        try {
+            $device->save();
+        } catch (\Exception $e) {
+            \App::abort('404');
+        }
+
+        return ['status' => true];
+
     }
 }

@@ -4,13 +4,12 @@ self.addEventListener('install', function (event) {
     self.skipWaiting();
 });
 
-// self.addEventListener('activate', function (event) {
-// });
-
 self.addEventListener('push', function (event) {
     console.log('Push message', event);
 
     var title = 'Push message';
+
+
 
     event.waitUntil(
         self.registration.showNotification(title, {

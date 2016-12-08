@@ -1,4 +1,5 @@
 {
   "name": "Buglinjo",
-  "gcm_sender_id": "954029445268"
+  "gcm_sender_id": "954029445268",
+  "permissions": [ "gcm","storage","pushMessaging","notifications" ]
 }
