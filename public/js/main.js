@@ -68,6 +68,7 @@ function getData() {
     });
 }
 
+
 function updateData(data) {
     $('#name').text(data.name);
     $('#today').text(data.today);
@@ -78,5 +79,7 @@ function updateData(data) {
 
     if(data.isLunchBreak) {
         $('.isLunchBreak').show();
+    } else {
+        $('.isLunchBreak').hide();
     }
 }
