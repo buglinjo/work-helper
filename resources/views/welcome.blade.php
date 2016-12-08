@@ -61,21 +61,23 @@
             .second {
                 font-size: 36px;
             }
+
+            .isLunchBreak {
+                display: none;
+            }
         </style>
     </head>
     <body id="body">
         <div class="flex-center position-ref full-height">
             <div class="content">
                 <div class="title m-b-md">
-                    <span class="today">Hi <strong>{{$name}}</strong>,</span><br/>
-                    @if($isLunchBreak)
-                        <span class="first">Yey! It's lunch time ^_^</span><br/>
-                    @endif
-                    <span class="first">You have worked <strong>{{$today}}</strong> of your full day</span><br/>
-                    <span class="first">and <strong>{{$salary}}</strong> of your salary cycle.</span><br/>
-                    <span class="second"><strong>{{$daysPassedAfterSalary}}</strong> days passed after salary.</span><br/>
-                    <span class="second">It's your <strong>{{$isDayNum}}</strong> day after salary.</span><br/>
-                    <span class="second"><strong>{{$daysLeftUntilSalary}}</strong> workdays left until salary.</span><br/>
+                    <span class="today">Hi <strong id="name">{{$name}}</strong>,</span><br/>
+                    <span class="first" class="isLunchBreak">Yey! It's lunch time ^_^</span><br class="isLunchBreak"/>
+                    <span class="first">You have worked <strong id="today">{{$today}}</strong> of your full day</span><br/>
+                    <span class="first">and <strong id="salary">{{$salary}}</strong> of your salary cycle.</span><br/>
+                    <span class="second"><strong id="daysPassedAfterSalary">{{$daysPassedAfterSalary}}</strong> days passed after salary.</span><br/>
+                    <span class="second">It's your <strong id="isDayNum">{{$isDayNum}}</strong> day after salary.</span><br/>
+                    <span class="second"><strong id="daysLeftUntilSalary">{{$daysLeftUntilSalary}}</strong> workdays left until salary.</span><br/>
                     <input type="hidden" value="{{csrf_token()}}" id="_token">
                 </div>
             </div>

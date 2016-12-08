@@ -39,9 +39,7 @@ class HomeController extends Controller {
 
     }
 
-    public function index(){
-
-        $this->pushNotification();
+    public function getData() {
 
         $name                    = $this->name;
         $timeZone                = $this->timeZone;
@@ -86,16 +84,16 @@ class HomeController extends Controller {
 
         $workDayNumber = ($weekNumber - 1) * $numberOfWorkDaysAWeek;
 
-        if($isWorkDay){
+        if ($isWorkDay) {
             $todayWorkDayStarts    = $workDayStarts;
             $todayWorkDayEnds      = $workDayEnds;
-            if($isWorkTime){
+            if ($isWorkTime) {
                 $secondsLeftUntilEndOfDay = $now->diffInSeconds($todayWorkDayEnds);
                 $secondsLeftUntilSalary = $secondsLeftUntilEndOfDay;
-            }elseif($now < $todayWorkDayStarts){
+            } elseif ($now < $todayWorkDayStarts){
                 $secondsLeftUntilEndOfDay = $secondsInWorkDay;
                 $daysLeftUntilSalary++;
-            }else{
+            } else {
                 $secondsLeftUntilEndOfDay = 0;
             }
             $todayWorkPercent = $this->percent($secondsLeftUntilEndOfDay, $secondsInWorkDay);
@@ -116,7 +114,14 @@ class HomeController extends Controller {
             'secondsPassedAfterLunchBreak' => $secondsPassedAfterLunchBreak
         ];
 
-        return view('welcome', $data);
+        return $data;
+    }
+
+    public function index(){
+
+        //$this->pushNotification();
+
+        return view('welcome', $this->getData());
 
     }
 

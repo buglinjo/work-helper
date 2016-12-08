@@ -13,7 +13,6 @@
 
 Route::get('/', 'HomeController@index');
 
-Route::post('save-endpoint', [
-    'uses' => 'HomeController@saveEndpoint',
-    'as'   => 'save.endpoint'
-]);
+Route::post('save-endpoint', 'HomeController@saveEndpoint');
+
+Route::post('get-data', 'HomeController@getData');
