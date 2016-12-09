@@ -13,9 +13,11 @@
 
 Route::get('/', 'HomeController@index');
 
-Route::post('save-endpoint', 'HomeController@saveEndpoint');
+Route::post('/save-endpoint', 'HomeController@saveEndpoint');
 
-Route::post('get-data', 'HomeController@getData');
+Route::post('/get-data', 'HomeController@getData');
+
+Route::get('/settings', 'HomeController@home');
 
 // Authentication Routes...
 Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
@@ -31,5 +33,3 @@ Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm'
 Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail');
 Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm');
 Route::post('password/reset', 'Auth\ResetPasswordController@reset');
-
-Route::get('/home', 'HomeController@home');
