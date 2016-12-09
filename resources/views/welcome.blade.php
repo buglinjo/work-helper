@@ -36,6 +36,12 @@
                 position: relative;
             }
 
+            .top-right {
+                position: absolute;
+                right: 10px;
+                top: 18px;
+            }
+
             .content {
                 text-align: center;
             }
@@ -69,20 +75,34 @@
     </head>
     <body id="body">
         <div class="flex-center position-ref full-height">
+            @if (Route::has('login'))
+                <div class="top-right links">
+                    @if (Auth::check())
+                        <a href="{{ url('/home') }}">Home</a>
+                    @else
+                        <a href="{{ url('/login') }}">Login</a>
+                        <a href="{{ url('/register') }}">Register</a>
+                    @endif
+                </div>
+            @endif
             <div class="content">
                 <div class="title m-b-md">
-                    <span class="today">Hi <strong id="name">{{$name}}</strong>,</span><br/>
-                    <span class="first isLunchBreak">Yey! It's lunch time ^_^</span><br class="isLunchBreak"/>
-                    <span class="first">You have worked <strong id="today">{{$today}}</strong> of your full day</span><br/>
-                    <span class="first">and <strong id="salary">{{$salary}}</strong> of your salary cycle.</span><br/>
-                    <span class="second"><strong id="daysPassedAfterSalary">{{$daysPassedAfterSalary}}</strong> days passed after salary.</span><br/>
-                    <span class="second">It's your <strong id="isDayNum">{{$isDayNum}}</strong> day after salary.</span><br/>
-                    <span class="second"><strong id="daysLeftUntilSalary">{{$daysLeftUntilSalary}}</strong> workdays left until salary.</span><br/>
-                    <input type="hidden" value="{{csrf_token()}}" id="_token">
+                    @if (Auth::check())
+                        <span class="today">Hi <strong id="name">{{$name}}</strong>,</span><br/>
+                        <span class="first isLunchBreak">Yey! It's lunch time ^_^</span><br class="isLunchBreak"/>
+                        <span class="first">You have worked <strong id="today">{{$today}}</strong> of your full day</span><br/>
+                        <span class="first">and <strong id="salary">{{$salary}}</strong> of your salary cycle.</span><br/>
+                        <span class="second"><strong id="daysPassedAfterSalary">{{$daysPassedAfterSalary}}</strong> days passed after salary.</span><br/>
+                        <span class="second">It's your <strong id="isDayNum">{{$isDayNum}}</strong> day after salary.</span><br/>
+                        <span class="second"><strong id="daysLeftUntilSalary">{{$daysLeftUntilSalary}}</strong> workdays left until salary.</span><br/>
+                        <input type="hidden" value="{{csrf_token()}}" id="_token">
+                    @endif
                 </div>
             </div>
         </div>
         <script src="js/jquery.js"></script>
-        <script src="js/main.js"></script>
+        @if (Auth::check())
+            <script src="js/main.js"></script>
+        @endif
     </body>
 </html>

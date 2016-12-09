@@ -185,4 +185,8 @@ class HomeController extends Controller {
         return ['status' => true];
 
     }
+
+    public function home() {
+        return view('home');
+    }
 }
