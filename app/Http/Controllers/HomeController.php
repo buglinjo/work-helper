@@ -14,7 +14,7 @@ class HomeController extends Controller {
 
     private $payFrequencyTypes;
     private $name;
-    private $timeZone;
+    private $timezone;
     private $startDate;
     private $workDayStartsInHours;
     private $workDayEndsInHours;
@@ -26,49 +26,26 @@ class HomeController extends Controller {
 
     public function __construct(){
 
-        $this->payFrequencyTypes       = PayFrequency::all();
-        $this->name                    = 'Irakli';
-        $this->startDate               = '2016-10-10';
-        $this->timeZone                = 'America/New_York';
-        $this->workDayStartsInHours    = '09:00:00';
-        $this->workDayEndsInHours      = '18:00:00';
-        $this->lunchBreakStarts        = '13:00:00';
-        $this->lunchBreakEnds          = '13:30:00';
-        $this->numberOfWorkdaysAWeek   = 5;
-        $this->payFrequency            = 2;
-        $this->hourlyWage              = 13.00;
-
-        date_default_timezone_set($this->timeZone);
+        $this->payFrequencyTypes = PayFrequency::all();
 
     }
 
     public function getData() {
 
-        if (\Auth::check()) {
-            $user = \Auth::user();
+        $user = \Auth::user();
 
-            $this->name                    = $user->name;
-            $this->startDate               = $user->workConfig->start_date;
-            $this->timezone                = $user->workConfig->timezone;
-            $this->workDayStartsInHours    = $user->workConfig->work_day_starts;
-            $this->workDayEndsInHours      = $user->workConfig->work_day_ends;
-            $this->lunchBreakStarts        = $user->workConfig->lunch_break_starts;
-            $this->lunchBreakEnds          = $user->workConfig->lunch_break_ends;
-            $this->numberOfWorkdaysAWeek   = $user->workConfig->num_of_workdays;
-            $this->payFrequency            = $user->workConfig->pay_frequency_id;
-            $this->hourlyWage              = $user->workConfig->hourly_wage;
+        $this->name                  = $name                    = $user->name;
+        $this->startDate             = $startDate               = $user->workConfig->start_date;
+        $this->timezone              = $timezone                = $user->workConfig->timezone;
+        $this->workDayStartsInHours  = $workDayStartsInHours    = $user->workConfig->work_day_starts;
+        $this->workDayEndsInHours    = $workDayEndsInHours      = $user->workConfig->work_day_ends;
+        $this->lunchBreakStarts      = $lunchBreakStartsInHours = $user->workConfig->lunch_break_starts;
+        $this->lunchBreakEnds        = $lunchBreakEndsInHours   = $user->workConfig->lunch_break_ends;
+        $this->numberOfWorkdaysAWeek = $numberOfWorkDaysAWeek   = $user->workConfig->num_of_workdays;
+        $this->payFrequency          = $payFrequency            = $user->workConfig->pay_frequency_id;
+        $this->hourlyWage            = $hourlyWage              = $user->workConfig->hourly_wage;
 
-        }
-
-        $name                    = $this->name;
-        $startDate               = $this->startDate;
-        $workDayStartsInHours    = $this->workDayStartsInHours;
-        $workDayEndsInHours      = $this->workDayEndsInHours;
-        $lunchBreakStartsInHours = $this->lunchBreakStarts;
-        $lunchBreakEndsInHours   = $this->lunchBreakEnds;
-        $numberOfWorkDaysAWeek   = $this->numberOfWorkdaysAWeek;
-        $payFrequency            = $this->payFrequency;
-        $hourlyWage              = $this->hourlyWage;
+        date_default_timezone_set($this->timezone);
 
         $startDateTime    = Carbon::createFromFormat('Y-m-d H:i:s', $startDate.' '.$workDayStartsInHours);
         $workWeekStart    = Carbon::today()->startOfWeek();
@@ -78,7 +55,7 @@ class HomeController extends Controller {
         $lunchBreakStarts = Carbon::createFromFormat('H:i:s', $lunchBreakStartsInHours);
         $lunchBreakEnds   = Carbon::createFromFormat('H:i:s', $lunchBreakEndsInHours);
 
-        $now = Carbon::now();
+        $now              = Carbon::now();
 
         $secondsLeftUntilSalary       = 0;
         $secondsLeftUntilLunchBreak   = 0;
@@ -138,7 +115,13 @@ class HomeController extends Controller {
 
         //$this->pushNotification();
 
-        return view('welcome', $this->getData());
+        $data = [];
+
+        if (\Auth::check()) {
+            $data = $this->getData();
+        }
+
+        return view('welcome', $data);
 
     }
 
