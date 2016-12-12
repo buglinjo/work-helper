@@ -100,9 +100,9 @@
                 </div>
             </div>
         </div>
-        <script src="js/jquery.js"></script>
+        <script src="/js/app.js"></script>
         @if (Auth::check())
-            <script src="js/main.js"></script>
+            <script src="/js/main.js"></script>
         @endif
     </body>
 </html>

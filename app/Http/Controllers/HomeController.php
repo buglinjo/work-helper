@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Device;
+use App\PayFrequency;
 use Carbon\Carbon;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
 use Illuminate\Http\Request;
@@ -29,20 +30,39 @@ class HomeController extends Controller {
         $this->name                    = 'Irakli';
         $this->startDate               = '2016-10-10';
         $this->timeZone                = 'America/New_York';
-        $this->workDayStartsInHours    = '09:00';
-        $this->workDayEndsInHours      = '18:00';
-        $this->lunchBreakStarts        = '13:00';
-        $this->lunchBreakEnds          = '13:30';
+        $this->workDayStartsInHours    = '09:00:00';
+        $this->workDayEndsInHours      = '18:00:00';
+        $this->lunchBreakStarts        = '13:00:00';
+        $this->lunchBreakEnds          = '13:30:00';
         $this->numberOfWorkdaysAWeek   = 5;
         $this->payFrequency            = 2;
         $this->hourlyWage              = 13.00;
+
+        date_default_timezone_set($this->timeZone);
 
     }
 
     public function getData() {
 
+        $this->payFrequencyTypes = PayFrequency::all();
+
+        if (\Auth::check()) {
+            $user = \Auth::user();
+
+            $this->name                    = $user->name;
+            $this->startDate               = $user->workConfig->start_date;
+            $this->timezone                = $user->workConfig->timezone;
+            $this->workDayStartsInHours    = $user->workConfig->work_day_starts;
+            $this->workDayEndsInHours      = $user->workConfig->work_day_ends;
+            $this->lunchBreakStarts        = $user->workConfig->lunch_break_starts;
+            $this->lunchBreakEnds          = $user->workConfig->lunch_break_ends;
+            $this->numberOfWorkdaysAWeek   = $user->workConfig->num_of_workdays;
+            $this->payFrequency            = $user->workConfig->pay_frequency_id;
+            $this->hourlyWage              = $user->workConfig->hourly_wage;
+
+        }
+
         $name                    = $this->name;
-        $timeZone                = $this->timeZone;
         $startDate               = $this->startDate;
         $workDayStartsInHours    = $this->workDayStartsInHours;
         $workDayEndsInHours      = $this->workDayEndsInHours;
@@ -52,15 +72,13 @@ class HomeController extends Controller {
         $payFrequency            = $this->payFrequency;
         $hourlyWage              = $this->hourlyWage;
 
-        date_default_timezone_set($timeZone);
-
-        $startDateTime    = Carbon::createFromFormat('Y-m-d H:i', $startDate.' '.$workDayStartsInHours);
+        $startDateTime    = Carbon::createFromFormat('Y-m-d H:i:s', $startDate.' '.$workDayStartsInHours);
         $workWeekStart    = Carbon::today()->startOfWeek();
         $workWeekEnd      = Carbon::today()->startOfWeek()->addDays($numberOfWorkDaysAWeek);
-        $workDayStarts    = Carbon::createFromFormat('H:i', $workDayStartsInHours);
-        $workDayEnds      = Carbon::createFromFormat('H:i', $workDayEndsInHours);
-        $lunchBreakStarts = Carbon::createFromFormat('H:i', $lunchBreakStartsInHours);
-        $lunchBreakEnds   = Carbon::createFromFormat('H:i', $lunchBreakEndsInHours);
+        $workDayStarts    = Carbon::createFromFormat('H:i:s', $workDayStartsInHours);
+        $workDayEnds      = Carbon::createFromFormat('H:i:s', $workDayEndsInHours);
+        $lunchBreakStarts = Carbon::createFromFormat('H:i:s', $lunchBreakStartsInHours);
+        $lunchBreakEnds   = Carbon::createFromFormat('H:i:s', $lunchBreakEndsInHours);
 
         $now = Carbon::now();
 

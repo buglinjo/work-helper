@@ -33,4 +33,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function workConfig(){
+        return $this->hasOne('App\WorkConfig', 'user_id', 'id');
+    }
 }

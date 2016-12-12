@@ -83,5 +83,13 @@
 
     <!-- Scripts -->
     <script src="/js/app.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.date').datepicker();
+            $('.time').timepicker({
+                showMeridian: false
+            });
+        });
+    </script>
 </body>
 </html>
