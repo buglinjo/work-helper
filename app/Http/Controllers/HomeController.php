@@ -26,7 +26,7 @@ class HomeController extends Controller {
 
     public function __construct(){
 
-        $this->payFrequencyTypes       = ['Weekly', 'Bi-weekly', 'Semi-monthly', 'Monthly'];
+        $this->payFrequencyTypes       = PayFrequency::all();
         $this->name                    = 'Irakli';
         $this->startDate               = '2016-10-10';
         $this->timeZone                = 'America/New_York';
@@ -43,8 +43,6 @@ class HomeController extends Controller {
     }
 
     public function getData() {
-
-        $this->payFrequencyTypes = PayFrequency::all();
 
         if (\Auth::check()) {
             $user = \Auth::user();
