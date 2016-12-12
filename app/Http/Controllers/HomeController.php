@@ -27,15 +27,15 @@ class HomeController extends Controller {
 
         $this->payFrequencyTypes       = ['Weekly', 'Bi-weekly', 'Semi-monthly', 'Monthly'];
         $this->name                    = 'Irakli';
-        $this->timeZone                = 'America/New_York';
         $this->startDate               = '2016-10-10';
+        $this->timeZone                = 'America/New_York';
         $this->workDayStartsInHours    = '09:00';
         $this->workDayEndsInHours      = '18:00';
         $this->lunchBreakStarts        = '13:00';
         $this->lunchBreakEnds          = '13:30';
         $this->numberOfWorkdaysAWeek   = 5;
         $this->payFrequency            = 2;
-        $this->hourlyWage              = 12.00;
+        $this->hourlyWage              = 13.00;
 
     }
 
@@ -76,20 +76,21 @@ class HomeController extends Controller {
         $secondsInPayFreq = $secondsInWorkDay * $numberOfWorkDaysAWeek * $payFrequency;
 
         $weeksPassed = $now->diffInWeeks($startDateTime->copy()->startOfDay());
-        $weekNumber  = $weeksPassed + 1 - (int)($weeksPassed/$payFrequency) * $payFrequency;
+        $weekNumber  = $weeksPassed + 1 - (int)($weeksPassed / $payFrequency) * $payFrequency;
 
-        $daysPassedAfterSalary  = Carbon::today()->endOfDay()->diffInDays($workWeekStart->copy()->subWeeks($weekNumber - 1));
+        $workDayNumber = ($weekNumber - 1) * $numberOfWorkDaysAWeek;
+        $daysPassedInThisWeek = $workWeekStart->diffInDays($workDayStarts->copy());
+
+        $daysPassedAfterSalary  = $workDayNumber + $daysPassedInThisWeek;
         $daysLeftUntilEndOfWeek = Carbon::today()->endOfDay()->diffInDays($workWeekEnd);
         $daysLeftUntilSalary    = $daysLeftUntilEndOfWeek + ($numberOfWorkDaysAWeek * ($payFrequency - $weekNumber));
 
-        $workDayNumber = ($weekNumber - 1) * $numberOfWorkDaysAWeek;
-
         if ($isWorkDay) {
-            $todayWorkDayStarts    = $workDayStarts;
-            $todayWorkDayEnds      = $workDayEnds;
+            $todayWorkDayStarts = $workDayStarts;
+            $todayWorkDayEnds   = $workDayEnds;
             if ($isWorkTime) {
                 $secondsLeftUntilEndOfDay = $now->diffInSeconds($todayWorkDayEnds);
-                $secondsLeftUntilSalary = $secondsLeftUntilEndOfDay;
+                $secondsLeftUntilSalary   = $secondsLeftUntilEndOfDay;
             } elseif ($now < $todayWorkDayStarts){
                 $secondsLeftUntilEndOfDay = $secondsInWorkDay;
                 $daysLeftUntilSalary++;
