@@ -180,7 +180,7 @@ class HomeController extends Controller {
         try {
             $device->save();
         } catch (\Exception $e) {
-            return abort('404');
+            return abort('503');
         }
 
         return ['status' => true];
@@ -202,7 +202,7 @@ class HomeController extends Controller {
         if ($this->updateUserSave($request->all())) {
             return redirect()->route('home');
         } else {
-            return abort(404);
+            return abort(503);
         }
 
     }
@@ -262,7 +262,7 @@ class HomeController extends Controller {
         if($this->updatePasswordSave($request->all())) {
             return redirect()->route('home');
         } else {
-            return abort(404);
+            return abort(503);
         }
 
     }
