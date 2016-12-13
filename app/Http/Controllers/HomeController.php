@@ -200,19 +200,18 @@ class HomeController extends Controller {
         $this->updateUserValidator($request->all())->validate();
 
         if ($this->updateUserSave($request->all())) {
-            return redirect(route('home'));
+            return redirect()->route('home');
         } else {
             return abort(404);
         }
 
     }
 
-    protected function updateUserValidator(array $data) {
+    private function updateUserValidator(array $data) {
 
         return \Validator::make($data, [
             'name'          => 'required|max:255',
             'email'         => 'required|email|max:255|unique:users,email,'.\Auth::user()->id,
-            'password'      => 'required|min:6|confirmed',
             'timezone'      => 'required',
             'start_date'    => 'required|date',
             'num_of_wdays'  => 'required|numeric|min:1|max:7',
@@ -226,8 +225,7 @@ class HomeController extends Controller {
 
     }
 
-    public function updateUserSave(array $data) {
-
+    private function updateUserSave(array $data) {
 
         $authUser   = \Auth::user();
         $workConfig = WorkConfig::where('user_id', $authUser->id)->firstOrFail();
@@ -235,7 +233,6 @@ class HomeController extends Controller {
 
         $user->name                     = $data['name'];
         $user->email                    = $data['email'];
-        $user->password                 = bcrypt($data['password']);
 
         $workConfig->timezone           = $data['timezone'];
         $workConfig->start_date         = Carbon::parse($data['start_date']);
@@ -255,6 +252,51 @@ class HomeController extends Controller {
         }
 
         return true;
+
+    }
+
+    public function updatePassword(Request $request) {
+
+        $this->updatePasswordValidator($request->all())->validate();
+
+        if($this->updatePasswordSave($request->all())) {
+            return redirect()->route('home');
+        } else {
+            return abort(404);
+        }
+
+    }
+
+    private function updatePasswordValidator(array $data) {
+
+        $rules = [
+            'current_password' => 'required|min:6|matches',
+            'password'         => 'required|min:6|confirmed',
+        ];
+
+        \Validator::extend('matches', function($attribute, $value, $parameters) {
+            return \Hash::check($value, \Auth::user()->password);
+        });
+
+        $messages = [ 'matches' => 'Your current password does not match our records.' ];
+
+        return \Validator::make($data, $rules, $messages);
+
+    }
+
+    private function updatePasswordSave(array $data) {
+
+        $user           = User::findOrFail(\Auth::user()->id);
+        $user->password = bcrypt($data['password']);
+
+        try {
+            $user->save();
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        return true;
+
     }
 
 }

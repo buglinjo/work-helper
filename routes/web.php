@@ -13,12 +13,16 @@
 
 Route::get('/', 'HomeController@index')->name('index');
 
-Route::post('/save-endpoint', 'HomeController@saveEndpoint');
+Route::post('save-endpoint', 'HomeController@saveEndpoint');
 
-Route::post('/get-data', 'HomeController@getData');
+Route::post('get-data', 'HomeController@getData');
 
-Route::get('/home', 'HomeController@home')->name('home');
-Route::post('/home', 'HomeController@updateUser');
+Route::group(['prefix' => 'home'], function (){
+    Route::get('/', 'HomeController@home')->name('home');
+    Route::post('/', 'HomeController@updateUser');
+
+    Route::post('/update-password', 'HomeController@updatePassword')->name('update.password');
+});
 
 // Authentication Routes...
 Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
