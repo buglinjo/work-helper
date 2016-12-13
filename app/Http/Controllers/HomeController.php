@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Device;
 use App\PayFrequency;
+use App\User;
+use App\WorkConfig;
 use Carbon\Carbon;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
 use Illuminate\Http\Request;
@@ -27,6 +29,18 @@ class HomeController extends Controller {
     public function __construct(){
 
         $this->payFrequencyTypes = PayFrequency::all();
+
+    }
+
+    public function index(){
+
+        $data = [];
+
+        if (\Auth::check()) {
+            $data = $this->getData();
+        }
+
+        return view('welcome', $data);
 
     }
 
@@ -71,8 +85,8 @@ class HomeController extends Controller {
         $weeksPassed = $now->diffInWeeks($startDateTime->copy()->startOfDay());
         $weekNumber  = $weeksPassed + 1 - (int)($weeksPassed / $payFrequency) * $payFrequency;
 
-        $workDayNumber = ($weekNumber - 1) * $numberOfWorkDaysAWeek;
-        $daysPassedInThisWeek = $workWeekStart->diffInDays($workDayStarts->copy());
+        $workDayNumber          = ($weekNumber - 1) * $numberOfWorkDaysAWeek;
+        $daysPassedInThisWeek   = $workWeekStart->diffInDays($workDayStarts->copy());
 
         $daysPassedAfterSalary  = $workDayNumber + $daysPassedInThisWeek;
         $daysLeftUntilEndOfWeek = Carbon::today()->endOfDay()->diffInDays($workWeekEnd);
@@ -94,7 +108,7 @@ class HomeController extends Controller {
         }
 
         $secondsLeftUntilSalary += $daysLeftUntilSalary * $secondsInWorkDay;
-        $salaryWorkPercent = $this->percent($secondsLeftUntilSalary, $secondsInPayFreq);
+        $salaryWorkPercent       = $this->percent($secondsLeftUntilSalary, $secondsInPayFreq);
 
         $data = [
             'name'                         => $name,
@@ -109,20 +123,6 @@ class HomeController extends Controller {
         ];
 
         return $data;
-    }
-
-    public function index(){
-
-        //$this->pushNotification();
-
-        $data = [];
-
-        if (\Auth::check()) {
-            $data = $this->getData();
-        }
-
-        return view('welcome', $data);
-
     }
 
     private function percent($num, $whole){
@@ -179,7 +179,7 @@ class HomeController extends Controller {
         try {
             $device->save();
         } catch (\Exception $e) {
-            \App::abort('404');
+            return abort('404');
         }
 
         return ['status' => true];
@@ -187,6 +187,73 @@ class HomeController extends Controller {
     }
 
     public function home() {
-        return view('home');
+
+        $data['payFreq'] = PayFrequency::all();
+
+        return view('home', $data);
+
     }
+
+    public function updateUser(Request $request) {
+
+        $this->updateUserValidator($request->all())->validate();
+
+        if ($this->updateUserSave($request->all())) {
+            return redirect(route('home'));
+        } else {
+            return abort(404);
+        }
+
+    }
+
+    protected function updateUserValidator(array $data) {
+
+        return \Validator::make($data, [
+            'name'          => 'required|max:255',
+            'email'         => 'required|email|max:255|unique:users,email,'.\Auth::user()->id,
+            'password'      => 'required|min:6|confirmed',
+            'timezone'      => 'required',
+            'start_date'    => 'required|date',
+            'num_of_wdays'  => 'required|numeric|min:1|max:7',
+            'start_time'    => 'required',
+            'end_time'      => 'required',
+            'lunch_start'   => 'required',
+            'lunch_end'     => 'required',
+            'pay_freq'      => 'required',
+            'hourly_wage'   => 'required|numeric',
+        ]);
+
+    }
+
+    public function updateUserSave(array $data) {
+
+
+        $authUser   = \Auth::user();
+        $workConfig = WorkConfig::where('user_id', $authUser->id)->firstOrFail();
+        $user       = User::findOrFail($authUser->id);
+
+        $user->name                     = $data['name'];
+        $user->email                    = $data['email'];
+        $user->password                 = bcrypt($data['password']);
+
+        $workConfig->timezone           = $data['timezone'];
+        $workConfig->start_date         = Carbon::parse($data['start_date']);
+        $workConfig->num_of_workdays    = $data['num_of_wdays'];
+        $workConfig->work_day_starts    = $data['start_time'];
+        $workConfig->work_day_ends      = $data['end_time'];
+        $workConfig->lunch_break_starts = $data['lunch_start'];
+        $workConfig->lunch_break_ends   = $data['lunch_end'];
+        $workConfig->pay_frequency_id   = $data['pay_freq'];
+        $workConfig->hourly_wage        = $data['hourly_wage'];
+
+        try {
+            $user->save();
+            $workConfig->save();
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        return true;
+    }
+
 }

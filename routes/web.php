@@ -11,13 +11,14 @@
 |
 */
 
-Route::get('/', 'HomeController@index');
+Route::get('/', 'HomeController@index')->name('index');
 
 Route::post('/save-endpoint', 'HomeController@saveEndpoint');
 
 Route::post('/get-data', 'HomeController@getData');
 
-Route::get('/settings', 'HomeController@home');
+Route::get('/home', 'HomeController@home')->name('home');
+Route::post('/home', 'HomeController@updateUser');
 
 // Authentication Routes...
 Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
