@@ -159,6 +159,7 @@ class HomeController extends Controller {
                 'we' => 'want', 'send to app'
             ))
         ));
+
         foreach ($devices as $d) {
             PushNotification::app('web')
                 ->to($d->device_token)
