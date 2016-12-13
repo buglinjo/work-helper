@@ -180,7 +180,7 @@ class HomeController extends Controller {
         try {
             $device->save();
         } catch (\Exception $e) {
-            return abort('503');
+            return abort(503);
         }
 
         return ['status' => true];
