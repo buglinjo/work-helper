@@ -48,7 +48,7 @@ class HomeController extends Controller {
 
         $user = \Auth::user();
 
-        $this->name                  = $name                    = $user->name;
+        $this->name                  = $name                    = explode(' ', $user->name)[0];
         $this->startDate             = $startDate               = $user->workConfig->start_date;
         $this->timezone              = $timezone                = $user->workConfig->timezone;
         $this->workDayStartsInHours  = $workDayStartsInHours    = $user->workConfig->work_day_starts;
