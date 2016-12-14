@@ -17,7 +17,7 @@ Route::post('save-endpoint', 'HomeController@saveEndpoint');
 
 Route::post('get-data', 'HomeController@getData');
 
-Route::group(['prefix' => 'home'], function (){
+Route::group(['prefix' => 'home', 'middleware' => 'auth'], function (){
     Route::get('/', 'HomeController@home')->name('home');
     Route::post('/', 'HomeController@updateUser');
 
