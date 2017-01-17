@@ -169,6 +169,7 @@ return [
 
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         'Davibennun\LaravelPushNotification\LaravelPushNotificationServiceProvider',
+        Laravel\Passport\PassportServiceProvider::class,
 
         /*
          * Application Service Providers...
