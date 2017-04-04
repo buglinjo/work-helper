@@ -20,6 +20,13 @@
         ]); ?>
     </script>
 </head>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-1287387058265593",
+        enable_page_level_ads: true
+    });
+</script>
 <body>
     <div id="app">
         <nav class="navbar navbar-default navbar-static-top">
